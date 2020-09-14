@@ -8,7 +8,7 @@ function Intern(name, role, email, id, school) {
     this.school = school;
 }
 
-Manager.prototype.getSchool = function () {
+Intern.prototype.getSchool = function () {
     return this.school;
 }
 

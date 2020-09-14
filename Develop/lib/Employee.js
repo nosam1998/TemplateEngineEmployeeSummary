@@ -9,19 +9,19 @@ function Employee(name, role, email, id) {
     this.id = id;
 }
 
-Manager.prototype.getName = function () {
+Employee.prototype.getName = function () {
     return this.name;
 }
 
-Manager.prototype.getRole = function () {
+Employee.prototype.getRole = function () {
     return this.role;
 }
 
-Manager.prototype.getEmail = function () {
+Employee.prototype.getEmail = function () {
     return this.email;
 }
 
-Manager.prototype.getId = function () {
+Employee.prototype.getId = function () {
     return this.id;
 }
 
