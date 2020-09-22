@@ -2,14 +2,16 @@
 const Employee = require("./Employee");
 
 
-function Manager(name, role, email, id, officeNumber) {
-    Employee.call(this, name, role, email, id);
+class Manager extends Employee {
+    constructor(name, role, email, id, officeNumber) {
+        super(name, role, email, id);
+        this.officeNumber = officeNumber;
+    }
 
-    this.office = officeNumber;
+    getOfficeNumber() {
+        return this.officeNumber;
+    }
 }
 
-Manager.prototype.getOfficeNumber = function () {
-    return this.officeNumber;
-}
 
 module.exports = Manager;

@@ -37,104 +37,110 @@ const Employee = require("./lib/Employee");
 
 let team_member_objs = [];
 
-let generic_info = [
-    {
-        type: "input",
-        message: "What is the employees Name?",
-        name: "name"
-    }, {
-        type: "input",
-        message: "What is the employees Email?",
-        name: "email"
-    }, {
-        type: "input",
-        message: "What is the employees ID?",
-        name: "id"
-    }
-];
+const generic_info = [{
+    type: "input",
+    message: "Name?",
+    name: "name"
+}, {
+    type: "input",
+    message: "Email?",
+    name: "email"
+}, {
+    type: "input",
+    message: "ID?",
+    name: "id"
+}];
+
+const get_manager_info = () => {
+    inquirer.prompt(get_role_specific("Manager")).then(response => {
+        create_employee_obj(response, "Manager");
+    });
+}
+
+const get_employee_info = role => {
+    inquirer.prompt(get_role_specific(role)).then(response => {
+        create_employee_obj(response, role);
+    });
+}
 
 const get_role_specific = role => {
-    let gi = generic_info;
+    let gi = generic_info.slice(0);
+    console.log(generic_info);
     if (role === "Manager") {
         gi.push({
             type: "input",
-            message: "What is the managers office number?",
+            message: "Office number?",
             name: "officeNumber"
         });
     } else if (role === "Engineer") {
         gi.push({
             type: "input",
-            message: "What is the engineers github?",
+            message: "Github?",
             name: "github"
         });
     } else if (role === "Intern") {
         gi.push({
             type: "input",
-            message: "What school does the intern go to?",
+            message: "School?",
             name: "school"
         });
     } else {
         render_html();
     }
-    console.log(gi);
+
     return gi;
 }
 
 const create_employee_obj = (response, role) => {
-    let temp_employee;
+    console.log(role)
     if (role === "Manager") {
-        temp_employee = new Manager(response.name, role, response.email, response.id, response.officeNumber);
+        let man = new Manager(response.name, role, response.email, response.id, response.officeNumber)
+        team_member_objs.push(man);
     } else if (role === "Engineer") {
-        temp_employee = new Engineer(response.name, role, response.email, response.id, response.github);
+        let eng = new Engineer(response.name, role, response.email, response.id, response.github);
+        team_member_objs.push(eng);
     } else if (role === "Intern") {
-        temp_employee = new Intern(response.name, role, response.email, response.id, response.school);
+        let intr = new Intern(response.name, role, response.email, response.id, response.school);
+        team_member_objs.push(intr);
     } else {
-        // console.log("Something isn't right?!")
+        console.log("Something isn't right?!")
     }
-    
-    team_member_objs.push(temp_employee);
+
+    console.log(team_member_objs)
+    get_role();
 }
 
-const get_generic_info = role => {
-    let generic_info_role_based = get_role_specific(role);
-    // console.log(generic_info_role_based);
-    inquirer.prompt(generic_info_role_based).then(response => {
-        create_employee_obj(response, role);
-        
-        // console.log(temp_employee);
-        // console.log("----------");
-        // console.log(team_member_objs);
-    })
-}
 
 // Might need to be a regular function (NOT an arrow function)
 const get_role = () => {
     // Get the information specific to the type/role of the employee
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "role",
-            message: "What is the employees role?",
-            choices: ["Manager", "Engineer", "Intern", "No more employees to add."]
-        }
-    ]).then(response => {
-        console.log(response);
+    inquirer.prompt([{
+        type: "list",
+        name: "role",
+        message: "What is the employees role?",
+        choices: ["Engineer", "Intern", "No more employees to add."]
+    }]).then(response => {
+        // console.log(response);
         if (response.role === "No more employees to add.") {
             render_html();
+        } else {
+            get_employee_info(response.role);
         }
-        return response.role;
     })
 }
 
-const main_loop = () => {
-    let role = get_role();
-    get_generic_info(role);
-}
 
 const render_html = () => {
     if (team_member_objs.length === 0) {
         console.log("Please add at least one employee before you are done!")
+    } else {
+        let html = render(team_member_objs)
+        // console.log(html);
+        fs.writeFileSync("templates/index.html", html);
     }
 }
 
-main_loop()
+get_manager_info();
+
+// let role = get_role();
+// get_generic_info(role);
